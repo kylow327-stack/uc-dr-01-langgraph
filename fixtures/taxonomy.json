@@ -1,0 +1,30 @@
+{
+  "taxonomyId": "TAX-v1",
+  "entries": [
+    {
+      "id": "passport",
+      "label": "Passport",
+      "description": "Identity document for a natural person."
+    },
+    {
+      "id": "proof_of_address",
+      "label": "Proof of address",
+      "description": "Recent address evidence naming the subject."
+    },
+    {
+      "id": "bank_statement",
+      "label": "Bank statement",
+      "description": "Account holder, institution, and statement period."
+    },
+    {
+      "id": "company_registry",
+      "label": "Company registry extract",
+      "description": "Legal-entity record from a registry extract."
+    },
+    {
+      "id": "source_of_funds",
+      "label": "Source of funds note",
+      "description": "Declared source-of-funds note. Not required on PACK-v1 profiles in this demo."
+    }
+  ]
+}

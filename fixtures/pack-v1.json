@@ -1,0 +1,26 @@
+{
+  "packId": "PACK-v1",
+  "confidenceFloor": 0.9,
+  "allowPrefix": "cases/allow/",
+  "profiles": {
+    "individual_onboarding": {
+      "label": "Individual onboarding",
+      "requiredDocs": ["passport", "proof_of_address", "bank_statement"],
+      "requiredFields": {
+        "passport": ["full_name", "document_number", "expiry_date", "nationality"],
+        "proof_of_address": ["addressee_name", "address_line", "issue_date"],
+        "bank_statement": ["account_holder", "statement_period", "institution"]
+      }
+    },
+    "sme_onboarding": {
+      "label": "SME onboarding",
+      "requiredDocs": ["company_registry", "passport", "proof_of_address", "bank_statement"],
+      "requiredFields": {
+        "company_registry": ["legal_name", "registry_number", "jurisdiction"],
+        "passport": ["full_name", "document_number", "expiry_date", "nationality"],
+        "proof_of_address": ["addressee_name", "address_line", "issue_date"],
+        "bank_statement": ["account_holder", "statement_period", "institution"]
+      }
+    }
+  }
+}

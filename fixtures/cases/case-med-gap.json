@@ -1,0 +1,66 @@
+{
+  "caseId": "CASE-2077",
+  "folderPath": "cases/allow/CASE-2077-sample-sme",
+  "profile": "sme_onboarding",
+  "title": "Sample SME onboarding",
+  "demoScript": "HITL · completeness gap",
+  "subjectLabel": "Harbor Sample Trading Ltd (fictional)",
+  "blurb": "SME pack with a company registry and a director passport. Proof of address is absent, and the passport extract has no expiry date. Designed to stop at the human gate.",
+  "identityConflict": false,
+  "elevatedIndicators": [],
+  "documents": [
+    {
+      "docId": "DOC-REG-02",
+      "fileName": "registry-extract-sample.pdf",
+      "classifiedType": "company_registry",
+      "pages": 2,
+      "fields": [
+        { "id": "legal_name", "label": "Legal name", "value": "Harbor Sample Trading Ltd (fictional)", "confidence": 0.98, "page": 1 },
+        { "id": "registry_number", "label": "Registry number", "value": "SAMPLE-REG-2077", "confidence": 0.97, "page": 1 },
+        { "id": "jurisdiction", "label": "Jurisdiction", "value": "Fictional State", "confidence": 0.96, "page": 1 }
+      ]
+    },
+    {
+      "docId": "DOC-PASSPORT-02",
+      "fileName": "director-passport-sample.pdf",
+      "classifiedType": "passport",
+      "pages": 1,
+      "fields": [
+        { "id": "full_name", "label": "Full name", "value": "Sam Okonkwo (fictional sample)", "confidence": 0.97, "page": 1 },
+        { "id": "document_number", "label": "Document number", "value": "SAMPLE-P-2077", "confidence": 0.95, "page": 1 },
+        { "id": "nationality", "label": "Nationality", "value": "Sampleland", "confidence": 0.94, "page": 1 }
+      ]
+    },
+    {
+      "docId": "DOC-BANK-02",
+      "fileName": "sme-statement-sample.pdf",
+      "classifiedType": "bank_statement",
+      "pages": 3,
+      "fields": [
+        { "id": "account_holder", "label": "Account holder", "value": "Harbor Sample Trading Ltd (fictional)", "confidence": 0.96, "page": 1 },
+        { "id": "statement_period", "label": "Statement period", "value": "2026-06-01 to 2026-06-30", "confidence": 0.97, "page": 1 },
+        { "id": "institution", "label": "Institution", "value": "North Quay Sample Bank (fictional)", "confidence": 0.98, "page": 1 }
+      ]
+    }
+  ],
+  "fixtureNarrative": {
+    "summary": "The SME folder has a registry extract, a director passport, and a bank statement. A proof of address is not in the folder, and the passport extract has no expiry date. This briefing does not assign a risk tier.",
+    "factors": [
+      {
+        "id": "RF-01",
+        "text": "Company registry legal name is present on the extract.",
+        "citations": ["cite:CASE-2077:DOC-REG-02:legal_name"]
+      },
+      {
+        "id": "RF-02",
+        "text": "Director passport extract does not include an expiry date.",
+        "citations": ["gap:CASE-2077:missing_field:passport:expiry_date"]
+      },
+      {
+        "id": "RF-03",
+        "text": "Proof of address is not in the named folder.",
+        "citations": ["gap:CASE-2077:missing_doc:proof_of_address"]
+      }
+    ]
+  }
+}

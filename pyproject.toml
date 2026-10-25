@@ -1,0 +1,29 @@
+[project]
+name = "uc-dr-01"
+version = "0.1.0"
+description = "UC-DR-01 document-risk LangGraph interview demo. Fixtures only, not a bank system."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "langgraph>=1.0",
+    "langchain-core>=0.3",
+    "pydantic>=2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+trace = ["langsmith>=0.3"]
+
+[project.scripts]
+uc-dr-01 = "uc_dr_01.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["uc_dr_01*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
