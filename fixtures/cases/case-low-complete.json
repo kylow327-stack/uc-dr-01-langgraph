@@ -1,0 +1,76 @@
+{
+  "caseId": "CASE-2041",
+  "folderPath": "cases/allow/CASE-2041-sample-retail",
+  "profile": "individual_onboarding",
+  "title": "Sample retail onboarding",
+  "demoScript": "Soft path · low and complete",
+  "subjectLabel": "Alex Rivera (fictional sample)",
+  "blurb": "Complete individual pack. Matching names. Every required field is at or above the 0.90 confidence floor. Designed so the policy table can take the soft path.",
+  "identityConflict": false,
+  "elevatedIndicators": [],
+  "documents": [
+    {
+      "docId": "DOC-PASSPORT-01",
+      "fileName": "passport-sample.pdf",
+      "classifiedType": "passport",
+      "pages": 1,
+      "fields": [
+        { "id": "full_name", "label": "Full name", "value": "Alex Rivera (fictional sample)", "confidence": 0.98, "page": 1 },
+        { "id": "document_number", "label": "Document number", "value": "SAMPLE-P-2041", "confidence": 0.97, "page": 1 },
+        { "id": "expiry_date", "label": "Expiry date", "value": "2031-06-14", "confidence": 0.96, "page": 1 },
+        { "id": "nationality", "label": "Nationality", "value": "Sampleland", "confidence": 0.95, "page": 1 }
+      ]
+    },
+    {
+      "docId": "DOC-POA-01",
+      "fileName": "proof-of-address-sample.pdf",
+      "classifiedType": "proof_of_address",
+      "pages": 1,
+      "fields": [
+        { "id": "addressee_name", "label": "Addressee name", "value": "Alex Rivera (fictional sample)", "confidence": 0.97, "page": 1 },
+        { "id": "address_line", "label": "Address", "value": "18 Paper Lane, Fictional City", "confidence": 0.95, "page": 1 },
+        { "id": "issue_date", "label": "Issue date", "value": "2026-08-02", "confidence": 0.94, "page": 1 }
+      ]
+    },
+    {
+      "docId": "DOC-BANK-01",
+      "fileName": "bank-statement-sample.pdf",
+      "classifiedType": "bank_statement",
+      "pages": 2,
+      "fields": [
+        { "id": "account_holder", "label": "Account holder", "value": "Alex Rivera (fictional sample)", "confidence": 0.96, "page": 1 },
+        { "id": "statement_period", "label": "Statement period", "value": "2026-07-01 to 2026-07-31", "confidence": 0.98, "page": 1 },
+        { "id": "institution", "label": "Institution", "value": "Sample Harbor Bank (fictional)", "confidence": 0.99, "page": 1 }
+      ]
+    }
+  ],
+  "fixtureNarrative": {
+    "summary": "The named folder holds a passport, a proof of address, and a bank statement for the fictional sample subject. The extracted name strings agree across the three documents. This briefing cites those fields only. It does not assign a risk tier.",
+    "factors": [
+      {
+        "id": "RF-01",
+        "text": "Passport full name and proof-of-address addressee are the same string in this fixture.",
+        "citations": [
+          "cite:CASE-2041:DOC-PASSPORT-01:full_name",
+          "cite:CASE-2041:DOC-POA-01:addressee_name"
+        ]
+      },
+      {
+        "id": "RF-02",
+        "text": "Bank statement account holder matches the passport full name in this fixture.",
+        "citations": [
+          "cite:CASE-2041:DOC-PASSPORT-01:full_name",
+          "cite:CASE-2041:DOC-BANK-01:account_holder"
+        ]
+      },
+      {
+        "id": "RF-03",
+        "text": "Passport expiry and proof-of-address issue date are both present on the extract.",
+        "citations": [
+          "cite:CASE-2041:DOC-PASSPORT-01:expiry_date",
+          "cite:CASE-2041:DOC-POA-01:issue_date"
+        ]
+      }
+    ]
+  }
+}

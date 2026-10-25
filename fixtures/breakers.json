@@ -1,0 +1,53 @@
+{
+  "caption": "Example signals only (ex: …). Illustrative design telemetry, not live bank KPIs. Trip rules are the contract this demo enforces.",
+  "breakers": [
+    {
+      "id": "CB-EXTRACT",
+      "name": "Document Intelligence",
+      "trip": "Error rate >5% or p95 >30s over 5 min",
+      "degrade": "Pause extract; queue files; page ops",
+      "defaultState": "closed",
+      "exampleSignal": "ex: 1.2% err"
+    },
+    {
+      "id": "CB-LLM",
+      "name": "Azure OpenAI summarize",
+      "trip": "5xx >3% or grounded-cite fail >10%",
+      "degrade": "Stop the LLM node; HITL packet without narrative",
+      "defaultState": "closed",
+      "exampleSignal": "ex: 0.4% 5xx"
+    },
+    {
+      "id": "CB-CONFIDENCE",
+      "name": "Extract confidence",
+      "trip": "Share of fields below 0.90 exceeds 25% of the pack",
+      "degrade": "Force HITL; widen the eval sample",
+      "defaultState": "half-open",
+      "exampleSignal": "ex: 18% low-conf"
+    },
+    {
+      "id": "CB-HITL-BACKLOG",
+      "name": "Analyst queue",
+      "trip": "Open HITL above SLA (50 cases or >4h p50)",
+      "degrade": "Throttle intake; alert the Risk Ops lead. Never approve",
+      "defaultState": "closed",
+      "exampleSignal": "ex: 12 open"
+    },
+    {
+      "id": "CB-CASE-WRITE",
+      "name": "Case / GRC write",
+      "trip": "Write fail >2% or dead-letter queue >0 for 10 min",
+      "degrade": "Freeze completions; retry the dead-letter queue. Never approve",
+      "defaultState": "closed",
+      "exampleSignal": "ex: 0 DLQ"
+    },
+    {
+      "id": "CB-DATA-EGRESS",
+      "name": "Network egress",
+      "trip": "Any call outside the allow-list",
+      "degrade": "Kill the run; open a security incident bridge",
+      "defaultState": "closed",
+      "exampleSignal": "ex: allow-list OK"
+    }
+  ]
+}
