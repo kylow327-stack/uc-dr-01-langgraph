@@ -130,19 +130,32 @@ Implemented in `uc_dr_01/policy.py`. First match wins on severity: high beats me
 pytest
 ```
 
-Covers the soft path (obligation stays uncleared), HITL timeout (quarantine, not approve), the policy table, and the three CLI flows.
+Covers the soft path (obligation stays uncleared), HITL timeout (quarantine, not approve), the policy table, and the three CLI flows. LangSmith evals are optional and are not part of `pytest`.
 
 ## LangSmith
 
 Tracing is optional. Leave `.env.example` commented and the demo runs with no key and no network.
 
-To turn it on, copy `.env.example` to `.env`, set `LANGSMITH_TRACING`, `LANGSMITH_API_KEY`, and `LANGSMITH_PROJECT`, and install the extra:
+To send graph runs to [LangSmith](https://smith.langchain.com/) and run the fixture golden set as an experiment, install the extra, then export the current LangSmith variables:
 
 ```bash
-python -m pip install -e ".[trace]"
+python -m pip install -e ".[dev,trace]"
+
+export LANGSMITH_TRACING=true
+export LANGSMITH_API_KEY=  # do not commit or echo the key
+export LANGSMITH_PROJECT=uc-dr-01
+# Required for organisation-scoped service keys (Settings → General).
+# A personal org with a single workspace is resolved automatically.
+# export LANGSMITH_WORKSPACE_ID=
+
+# A single traced fixture run:
+python -m uc_dr_01 run --case CASE-2041
+
+# Golden dataset + experiment (fixtures only, no model call):
+python -m uc_dr_01 evals
 ```
 
-LangGraph picks up `LANGSMITH_TRACING`, `LANGSMITH_API_KEY`, `LANGSMITH_PROJECT`, and `LANGSMITH_ENDPOINT` from the environment. The JSON field `tracing` is `off` unless `LANGSMITH_TRACING` is true. v1 does not require a live project. Do not point tracing at real customer documents.
+LangGraph picks up `LANGSMITH_TRACING`, `LANGSMITH_API_KEY`, `LANGSMITH_PROJECT`, `LANGSMITH_WORKSPACE_ID`, and `LANGSMITH_ENDPOINT` from the environment. The JSON field `tracing` is `off` unless `LANGSMITH_TRACING` is true. The experiment reuses the existing fixture invariants: the soft path never clears a regulatory obligation, HITL timeout quarantines and does not approve, and high-tier waits without writing a packet. Open the project, dataset, and experiment URLs printed by `evals` in the LangSmith Evals dashboard. v1 does not require a live project. Do not point tracing at real customer documents. If you create a `.env`, it is gitignored.
 
 `OPENAI_API_KEY` and `AZURE_OPENAI_*` are reserved for a later narrative model. v1 ignores them and uses the fixture briefing. The score node would ignore model output anyway.
 
@@ -155,6 +168,7 @@ LangGraph picks up `LANGSMITH_TRACING`, `LANGSMITH_API_KEY`, `LANGSMITH_PROJECT`
 | `uc_dr_01/packet.py` | Non-clearing simulated packet |
 | `fixtures/` | Fictional PACK-v1, taxonomy, breakers, and case packs |
 | `fixtures/cases/case-paste.json` | Sample pack for `--fixture` |
+| `uc_dr_01/evals.py` | Optional LangSmith dataset and experiment |
 
 ## Not in this repo
 

@@ -4,6 +4,7 @@ Examples:
   python -m uc_dr_01 run --case CASE-2041
   python -m uc_dr_01 run --case CASE-2077 --timeout
   python -m uc_dr_01 run --fixture fixtures/cases/case-paste.json
+  python -m uc_dr_01 evals
 """
 
 from __future__ import annotations
@@ -41,12 +42,27 @@ def build_parser() -> argparse.ArgumentParser:
         help="Resume a waiting HITL run with approve, edit, reject, escalate, or timeout.",
     )
     run.add_argument("--note", default=None, help="Optional analyst note stored on an HITL action.")
+    ev = sub.add_parser(
+        "evals",
+        help="Create the LangSmith golden dataset and run an experiment. Needs LANGSMITH_API_KEY.",
+    )
+    ev.set_defaults(command="evals")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    if args.command == "evals":
+        from uc_dr_01.evals import render_langsmith_summary, run_langsmith_evals
+
+        try:
+            payload = run_langsmith_evals()
+        except Exception as exc:  # noqa: BLE001
+            print(str(exc), file=sys.stderr)
+            return 2
+        print(render_langsmith_summary(payload), end="")
+        return 0
     if args.timeout and args.action and args.action != "timeout":
         parser.error("--timeout quarantines a waiting run. It cannot be combined with another --action.")
     action = "timeout" if args.timeout else args.action

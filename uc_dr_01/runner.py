@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 from typing import Any
 from uuid import uuid4
 
@@ -11,6 +10,7 @@ from langgraph.types import Command
 from uc_dr_01.catalog import breaker_states, load_case, load_pack, taxonomy_ids
 from uc_dr_01.errors import DemoError
 from uc_dr_01.graph import build_graph
+from uc_dr_01.langsmith_tracing import configure_tracing, flush_traces, tracing_enabled, tracing_mode
 
 HITL_ACTIONS = {"approve", "edit", "reject", "escalate", "timeout"}
 
@@ -18,13 +18,6 @@ _NOTICE = (
     "Fixtures-only interview demo. Not a bank system. "
     "The packet is simulated and does not clear a regulatory obligation."
 )
-
-
-def tracing_mode() -> str:
-    flag = os.environ.get("LANGSMITH_TRACING", "").strip().lower()
-    if flag in {"1", "true", "yes", "on"}:
-        return "langsmith_requested"
-    return "off"
 
 
 def _interrupt_value(item: Any) -> dict[str, Any]:
@@ -134,24 +127,38 @@ def run_case(
             f"Unrecognized HITL action {action!r}. Nothing was approved and no soft flag was written."
         )
     run_id = run_id or f"run_{case_file['caseId']}_{uuid4().hex[:8]}"
+    if tracing_enabled():
+        configure_tracing(resolve_workspace=True)
     graph = build_graph()
-    config = {"configurable": {"thread_id": run_id}}
-    result = graph.invoke(initial_state(case_file, run_id=run_id, breaker_overrides=breaker_overrides), config)
-    interrupts = list(result.get("__interrupt__") or [])
-    if interrupts:
-        if action is None:
-            return public_result(result, phase="hitl_waiting", interrupt_payload=_interrupt_value(interrupts[0]))
-        resumed = graph.invoke(Command(resume={"action": action, "note": note}), config)
-        if resumed.get("__interrupt__"):
-            raise DemoError("HITL resume did not leave the interrupt. Nothing was approved.", exit_code=2)
-        return public_result(resumed)
-    if action is not None:
-        raise DemoError(
-            "That HITL action applies only when the run is waiting at the interrupt. "
-            f"This run ended in phase {result.get('phase')!r}, so nothing was quarantined and nothing was approved.",
-            exit_code=2,
-        )
-    return public_result(result)
+    config = {
+        "configurable": {"thread_id": run_id},
+        "run_name": f"uc-dr-01:{case_file.get('caseId')}",
+        "tags": ["uc-dr-01"],
+        "metadata": {
+            "case_id": case_file.get("caseId"),
+            "action": action,
+            "run_id": run_id,
+        },
+    }
+    try:
+        result = graph.invoke(initial_state(case_file, run_id=run_id, breaker_overrides=breaker_overrides), config)
+        interrupts = list(result.get("__interrupt__") or [])
+        if interrupts:
+            if action is None:
+                return public_result(result, phase="hitl_waiting", interrupt_payload=_interrupt_value(interrupts[0]))
+            resumed = graph.invoke(Command(resume={"action": action, "note": note}), config)
+            if resumed.get("__interrupt__"):
+                raise DemoError("HITL resume did not leave the interrupt. Nothing was approved.", exit_code=2)
+            return public_result(resumed)
+        if action is not None:
+            raise DemoError(
+                "That HITL action applies only when the run is waiting at the interrupt. "
+                f"This run ended in phase {result.get('phase')!r}, so nothing was quarantined and nothing was approved.",
+                exit_code=2,
+            )
+        return public_result(result)
+    finally:
+        flush_traces()
 
 
 def run_named_case(case_id: str, **kwargs: Any) -> dict[str, Any]:
