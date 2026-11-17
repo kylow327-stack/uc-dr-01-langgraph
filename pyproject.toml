@@ -12,7 +12,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
-trace = ["langsmith>=0.3"]
+trace = ["langsmith>=0.14.17"]
 
 [project.scripts]
 uc-dr-01 = "uc_dr_01.cli:main"

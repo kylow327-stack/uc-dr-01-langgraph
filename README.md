@@ -136,7 +136,7 @@ Covers the soft path (obligation stays uncleared), HITL timeout (quarantine, not
 
 Tracing is optional. Leave `.env.example` commented and the demo runs with no key and no network.
 
-To send graph runs to [LangSmith](https://smith.langchain.com/) and run the fixture golden set as an experiment, install the extra, then export the current LangSmith variables:
+To send graph runs to [LangSmith](https://smith.langchain.com/) and run the fixture golden set as an experiment, install the extra (langsmith 0.14.17 or later, which includes the SmithDB query methods), then export the current LangSmith variables:
 
 ```bash
 python -m pip install -e ".[dev,trace]"
